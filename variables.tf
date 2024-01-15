@@ -4,6 +4,24 @@ variable "create" {
   default     = true
 }
 
+variable "create_cluster" {
+  description = "Controls if RDS cluster should be created (it affects almost all resources)"
+  type        = bool
+  default     = true
+}
+
+variable "create_random_password" {
+  description = "Whether to create random password for RDS primary cluster"
+  type        = bool
+  default     = true
+}
+
+variable "password" {
+  description = "Master DB password"
+  type        = string
+  default     = ""
+}
+
 variable "name" {
   description = "Name used across resources created"
   type        = string

@@ -5,6 +5,8 @@ locals {
 
   port = coalesce(var.port, (var.engine == "aurora-postgresql" || var.engine == "postgres" ? 5432 : 3306))
 
+  master_password      = var.create_cluster && var.create_random_password && var.is_primary_cluster ? random_password.master_password[0].result : var.password
+
   internal_db_subnet_group_name = try(coalesce(var.db_subnet_group_name, var.name), "")
   db_subnet_group_name          = var.create_db_subnet_group ? try(aws_db_subnet_group.this[0].name, null) : local.internal_db_subnet_group_name
 
@@ -16,6 +18,25 @@ locals {
   backtrack_window = (var.engine == "aurora-mysql" || var.engine == "aurora") && var.engine_mode != "serverless" ? var.backtrack_window : 0
 
   is_serverless = var.engine_mode == "serverless"
+
+}
+
+resource "random_id" "snapshot_identifier" {
+  count = var.create_cluster ? 1 : 0
+
+  keepers = {
+    id = var.name
+  }
+
+  byte_length = 4
+}
+
+# Random string to use as master password
+resource "random_password" "master_password" {
+  count = var.create_cluster && var.create_random_password ? 1 : 0
+
+  length  = 10
+  special = false
 }
 
 ################################################################################
@@ -70,7 +91,7 @@ resource "aws_rds_cluster" "this" {
   kms_key_id                    = var.kms_key_id
   manage_master_user_password   = var.global_cluster_identifier == null && var.manage_master_user_password ? var.manage_master_user_password : null
   master_user_secret_kms_key_id = var.global_cluster_identifier == null && var.manage_master_user_password ? var.master_user_secret_kms_key_id : null
-  master_password               = var.is_primary_cluster && !var.manage_master_user_password ? var.master_password : null
+  master_password               = local.master_password #var.is_primary_cluster && !var.manage_master_user_password ? var.master_password : null
   master_username               = var.is_primary_cluster ? var.master_username : null
   network_type                  = var.network_type
   port                          = local.port
