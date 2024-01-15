@@ -249,9 +249,3 @@ output "this_rds_cluster_instance_ids" {
   description = "A list of all cluster instance ids"
   value       = [try(aws_rds_cluster_instance.this[1].id, null)] #aws_rds_cluster_instance.this.*.id
 }
-
-# aws_security_group
-output "this_security_group_id" {
-  description = "The security group ID of the cluster"
-  value       = local.rds_security_group_id
-}
