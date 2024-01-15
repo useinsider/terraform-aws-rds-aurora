@@ -161,10 +161,10 @@ resource "aws_rds_cluster_instance" "this" {
   auto_minor_version_upgrade            = try(each.value.auto_minor_version_upgrade, var.auto_minor_version_upgrade)
   availability_zone                     = try(each.value.availability_zone, null)
   ca_cert_identifier                    = var.ca_cert_identifier
-  cluster_identifier                    = aws_rds_cluster.this[0].id
+  cluster_identifier                    = var.cluster_identifier_instance
   copy_tags_to_snapshot                 = try(each.value.copy_tags_to_snapshot, var.copy_tags_to_snapshot)
   db_parameter_group_name               = var.create_db_parameter_group ? aws_db_parameter_group.this[0].id : try(each.value.db_parameter_group_name, var.db_parameter_group_name)
-  db_subnet_group_name                  = local.db_subnet_group_name
+  db_subnet_group_name                  = var.db_subnet_group_name_instance
   engine                                = var.engine
   engine_version                        = var.engine_version
   identifier                            = var.instances_use_identifier_prefix ? null : try(each.value.identifier, "${var.name}-${each.key}")

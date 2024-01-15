@@ -32,6 +32,12 @@ variable "db_subnet_group_name" {
   default     = ""
 }
 
+variable "db_subnet_group_name_instance" {
+  description = "The name of the subnet group name (existing or created) for the instances"
+  type        = string
+  default     = ""
+}
+
 variable "subnets" {
   description = "List of subnet IDs used by database subnet group created"
   type        = list(string)
@@ -398,6 +404,12 @@ variable "instance_timeouts" {
   description = "Create, update, and delete timeout configurations for the cluster instance(s)"
   type        = map(string)
   default     = {}
+}
+
+variable "cluster_identifier_instance" {
+  description = "The cluster identifier for instances"
+  type        = string
+  default     = null
 }
 
 ################################################################################
